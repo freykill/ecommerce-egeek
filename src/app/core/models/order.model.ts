@@ -82,7 +82,7 @@ export const ORDER_STATUS: Record<
   PD: { label: 'Pagada', tone: 'success' },
   PR: { label: 'En preparación', tone: 'active' },
   RD: { label: 'Lista / entregada', tone: 'success' },
-  DV: { label: 'Devuelta', tone: 'danger' },
+  DV: { label: 'Entregada', tone: 'success' },
   CN: { label: 'Cancelada', tone: 'danger' },
   EX: { label: 'Expirada', tone: 'muted' },
 };

@@ -116,25 +116,22 @@ const PAGE_SIZE = 24;
       </section>
 
       <!-- ------------------------------------ FRANJA DE BENEFICIOS (marquee) -->
-      <section class="surface-page mt-4">
-        <div
-          class="marquee-wrap no-scrollbar overflow-hidden rounded-[var(--radius)] border border-line bg-surface-muted py-3.5"
-        >
-          <div class="marquee" aria-hidden="true">
-            @for (n of [0, 1]; track n) {
-              @for (perk of perks(); track perk.text) {
-                <span
-                  class="inline-flex items-center gap-2.5 whitespace-nowrap font-mono text-[0.72rem] font-medium uppercase tracking-[0.14em] text-ink-soft"
-                >
-                  <app-icon [name]="perk.icon" [size]="15" class="shrink-0 text-brand" />
-                  {{ perk.text }}
-                </span>
-                <span
-                  class="mx-9 h-[3px] w-[3px] shrink-0 rounded-full bg-line-strong"
-                ></span>
-              }
+      <!-- Full-bleed, sin caja: el contenido se desvanece en los bordes.
+           6 copias => la mitad (punto de loop) siempre excede el viewport,
+           así el desplazamiento es infinito sin verse el final. -->
+      <section class="marquee-wrap marquee-fade no-scrollbar mt-6 overflow-hidden py-2">
+        <div class="marquee" aria-hidden="true">
+          @for (n of [0, 1, 2, 3, 4, 5]; track n) {
+            @for (perk of perks(); track perk.text) {
+              <span
+                class="inline-flex items-center gap-2.5 whitespace-nowrap font-mono text-[0.72rem] font-medium uppercase tracking-[0.14em] text-ink-soft"
+              >
+                <app-icon [name]="perk.icon" [size]="15" class="shrink-0 text-brand" />
+                {{ perk.text }}
+              </span>
+              <span class="mx-9 h-[3px] w-[3px] shrink-0 rounded-full bg-line-strong"></span>
             }
-          </div>
+          }
         </div>
       </section>
 

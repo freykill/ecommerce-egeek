@@ -483,10 +483,27 @@ img {
   display: flex;
   align-items: center;
   width: max-content;
-  animation: marquee 34s linear infinite;
+  animation: marquee 90s linear infinite;
 }
 .marquee-wrap:hover .marquee {
   animation-play-state: paused;
+}
+/* Desvanecido en los extremos: integra la franja sin encajonarla */
+.marquee-fade {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 12%,
+    black 88%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 12%,
+    black 88%,
+    transparent
+  );
 }
 @keyframes marquee {
   to {

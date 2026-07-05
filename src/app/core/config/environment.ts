@@ -12,6 +12,6 @@
  */
 export const environment = {
   production: false,
-  apiBaseUrl: 'http://localhost:3000/api',
-  tenantSlug: 'default',
+  apiBaseUrl: 'http://162.35.172.236:3000/api',
+  tenantSlug: 'mi-tienda',
 };

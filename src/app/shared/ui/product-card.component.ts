@@ -47,22 +47,22 @@ import { IconComponent } from './icon.component';
         }
       </div>
 
-      <!-- Cuerpo: bloque compacto pegado a la imagen -->
-      <div class="flex flex-col pt-2.5">
+      <!-- Cuerpo: sin borde, con ritmo parejo bajo la imagen -->
+      <div class="flex flex-1 flex-col px-0.5 pt-3">
         <span class="meta">
           {{ product.category.name }}@if (product.brand) {<span class="text-ink-mute"> · {{ product.brand.name }}</span>}
         </span>
         <h3
-          class="mt-1 line-clamp-2 text-[0.95rem] font-medium leading-snug text-ink transition-colors group-hover:text-brand"
+          class="mt-1.5 line-clamp-2 text-[0.95rem] font-medium leading-snug text-ink transition-colors group-hover:text-brand"
         >
           {{ product.name }}
         </h3>
         @if (product.priceFrom !== null) {
-          <span class="mt-1 text-[1.02rem] font-semibold tracking-tight text-ink tabular-nums">
+          <span class="mt-2 text-[1.05rem] font-semibold tracking-tight text-ink tabular-nums">
             {{ product.priceFrom | money }}
           </span>
         } @else {
-          <span class="mt-1 text-sm text-ink-soft">Precio a consultar</span>
+          <span class="mt-2 text-sm text-ink-soft">Precio a consultar</span>
         }
       </div>
     </a>

@@ -12,6 +12,6 @@
  */
 export const environment = {
   production: false,
-  apiBaseUrl: 'http://162.35.172.236:3000/api',
+  apiBaseUrl: 'https://api.162.35.172.236.nip.io/api',
   tenantSlug: 'mi-tienda',
 };

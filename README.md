@@ -1,112 +1,154 @@
-# Ecommerce eGeek — Storefront público
+<div align="center">
 
-Sitio público de la tienda (no requiere login): el comprador ve el catálogo,
-arma su pedido y lo cierra por **WhatsApp** con la tienda. Consume la API pública
-del backend multi-tenant.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/logo-white.svg">
+  <img src="docs/logo.svg" alt="egeek" width="150">
+</picture>
 
-- **Stack:** Angular 21 (standalone, signals, control flow nuevo, lazy routes) +
-  Tailwind CSS 4.
-- **Estética:** "marketplace cercano" — redondeado, cálido, botones grandes y
-  directos. Los **colores llegan dinámicos** del backend (`/public/branding`).
+### Compra desde el catálogo y cierra el pedido por WhatsApp
 
----
+Storefront multi-tienda: catálogo, carrito y checkout **sin login**. El cliente
+arma su pedido y lo confirma por WhatsApp; el nombre, el logo, los colores y la
+moneda llegan del backend, así que un mismo frontend sirve a cualquier tienda.
 
-## 1. Configuración (¡importante!)
+[![Ver la tienda en vivo](https://img.shields.io/badge/Ver_la_tienda_en_vivo-16a34a?style=flat-square&logo=vercel&logoColor=white)](https://ecommerce-egeek.vercel.app/)
 
-Todo se cambia en **un solo archivo**: [`src/app/core/config/environment.ts`](src/app/core/config/environment.ts)
+![Angular](https://img.shields.io/badge/Angular-161616?style=flat-square&logo=angular&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-161616?style=flat-square&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-161616?style=flat-square&logo=tailwindcss&logoColor=white)
+![RxJS](https://img.shields.io/badge/RxJS-161616?style=flat-square&logo=reactivex&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-161616?style=flat-square&logo=vitest&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-161616?style=flat-square&logo=vercel&logoColor=white)
+
+</div>
+
+<!--
+  Sugerencia: agrega una captura del catálogo aquí para que el README luzca mejor.
+  Guárdala en docs/ y descomenta:
+
+  <p align="center">
+    <img src="docs/catalogo.png" alt="Catálogo de egeek" width="820">
+  </p>
+-->
+
+## Sobre el proyecto
+
+**egeek** es el frontend público de una plataforma de e-commerce pensada para
+tiendas que venden por WhatsApp. Muestra el catálogo, deja armar el pedido y lo
+cierra abriendo WhatsApp con el resumen listo; el pedido se crea en el backend y
+el cliente puede hacerle seguimiento con un enlace, sin crear cuenta.
+
+Toda la lógica de negocio (precios, stock, totales) vive en el backend: el front
+nunca envía un precio, solo `idVariant` + cantidad, y el servidor confirma el
+total. El panel de administración de la tienda vive en un repositorio aparte;
+este repo es **solo la tienda pública**.
+
+## Características
+
+- **Catálogo** con búsqueda, filtros por categoría y marca, y productos destacados.
+- **Detalle de producto** con variantes (p. ej. talla/color), galería e imágenes
+  por variante.
+- **Carrito** persistente en `localStorage`, construido con *signals*; el subtotal
+  es referencial y el total real lo confirma el checkout en el servidor.
+- **Checkout sin login**: se crea el pedido y se abre WhatsApp con el mensaje
+  armado (incluye el enlace de seguimiento).
+- **Seguimiento del pedido** por enlace público con token, sin cuenta.
+- **Multi-tenant / white-label**: un mismo frontend sirve varias tiendas mediante
+  el header `X-Tenant-Slug`.
+- **Marca dinámica**: el color primario y demás branding llegan del backend y se
+  inyectan en tokens CSS (`color-mix`), sin recompilar.
+- **Modo mantenimiento** y opciones de **delivery / retiro en tienda** según la
+  configuración de cada tienda.
+
+## Stack
+
+| Capa | Tecnologías |
+| --- | --- |
+| Framework | Angular 21 — standalone components, señales y control-flow (`@if` / `@for`), rutas lazy |
+| Estilos | Tailwind CSS v4 · sistema de tokens propio (*editorial minimal*) · Instrument Sans + IBM Plex Mono |
+| Reactividad | Angular Signals + RxJS (`HttpClient`) |
+| Testing | Vitest |
+| Backend | API pública multi-tenant *(repositorio aparte)* |
+| Entrega | Vercel |
+
+## Instalación
+
+Requiere **Node.js 20+** y **npm 11+**.
+
+```bash
+git clone <url-del-repo>
+cd ecommerce-egeek
+npm install
+npm start
+```
+
+La app queda disponible en `http://localhost:4200`.
+
+## Configuración
+
+El storefront apunta a un backend y a una tienda con solo dos valores en
+[`src/app/core/config/environment.ts`](src/app/core/config/environment.ts):
 
 ```ts
 export const environment = {
   production: false,
-  apiBaseUrl: 'http://localhost:3000/api', // prefijo global del backend (termina en /api)
-  tenantSlug: 'default',                    // identifica la tienda (header X-Tenant-Slug); en dev la demo es 'default'
+  apiBaseUrl: 'https://tu-backend/api', // prefijo del backend (termina en /api)
+  tenantSlug: 'mi-tienda',              // identifica la tienda (header X-Tenant-Slug)
 };
 ```
 
-- `apiBaseUrl`: URL base del backend.
-- `tenantSlug`: se envía en **cada** request como header `X-Tenant-Slug` (multi-tenant
-  OBLIGATORIO). Sin esto ningún endpoint del storefront responde.
+Cada request al backend viaja con el header `X-Tenant-Slug`; sin él, ningún
+endpoint del storefront responde. Si apuntas a otro host (p. ej. `localhost:3000`
+desde `:4200`), el backend debe permitir el origen y el header por CORS.
 
-> **CORS:** al apuntar a otro host (ej. `localhost:3000` desde `localhost:4200`),
-> el backend debe permitir el origen y el header `X-Tenant-Slug`. Si prefieres
-> evitar CORS, sirve el front bajo el subdominio de la tienda o usa un proxy de
-> dev y deja `apiBaseUrl = '/api'`.
+## Scripts
 
-## 2. Correr
+| Comando | Descripción |
+| --- | --- |
+| `npm start` | Servidor de desarrollo con recarga en caliente |
+| `npm run build` | Build de producción en `dist/ecommerce-egeek/browser` |
+| `npm test` | Tests unitarios con Vitest |
+| `npm run watch` | Build incremental en modo watch |
 
-```bash
-npm install      # solo la primera vez
-npm start        # ng serve -> http://localhost:4200
-npm run build    # build de producción en dist/
-npm test         # tests unitarios (vitest), una sola corrida con --watch=false
-```
-
----
-
-## 3. Arquitectura
-
-```
-src/app/
-  core/
-    config/environment.ts        Config editable (URL + tenant slug)
-    models/                      Interfaces TS calcadas de la API (barrel en index.ts)
-    http/
-      tenant.interceptor.ts      Añade X-Tenant-Slug a cada request
-      api.service.ts             Desenvuelve { success, data, meta } y normaliza errores (ApiError)
-    services/
-      store-context.service.ts   Branding + settings (carga al iniciar, signals globales)
-      theme.service.ts           Aplica colores de marca a CSS vars (contrast auto)
-      catalog.service.ts         categorías, marcas, productos, detalle
-      cart.service.ts            Carrito (signals + localStorage)
-      order.service.ts           checkout, seguimiento, whatsapp-sent
-  shared/
-    pipes/money.pipe.ts          {{ valor | money }} con el símbolo de la tienda
-    ui/                          icon, spinner, empty-state, product-card
-  layout/                        header (buscador, carrito, categorías) + footer
-  features/
-    catalog/                     Grilla paginada + filtros (search/category/brand)
-    product-detail/              Galería, variantes, stepper, agregar al carrito
-    cart/                        Carrito editable + resumen
-    checkout/                    Formulario + validación + creación del pedido
-    order-tracking/              Estado del pedido + timeline
-    not-found/                   404
-  app.ts / app.routes.ts / app.config.ts
-```
-
-### Contratos clave (para extender)
-
-- **Envoltura:** todas las respuestas vienen como `{ success, message, data, meta }`.
-  `ApiService` devuelve directamente `data` (y `meta` en listados). Los errores se
-  normalizan a `ApiError { message, statusCode, errors }` (mensaje ya en español).
-- **Tema dinámico:** `ThemeService` escribe `--brand-primary` / `--brand-secondary`
-  (y su color de contraste) en `:root`. Tailwind expone `bg-brand`, `text-brand`,
-  `bg-brand-soft`, etc. (ver `@theme inline` en `src/styles.css`).
-- **Carrito:** `CartService` es la única fuente de verdad (signals + localStorage).
-  Guarda una "foto" del precio para mostrar; **el total real lo calcula el servidor**
-  en el checkout. El payload se arma con `cart.toCheckoutItems()` (solo `idVariant` +
-  `quantity`).
-- **Sistema de diseño:** clases reutilizables en `src/styles.css`
-  (`.btn`, `.btn-brand`, `.btn-wa`, `.btn-outline`, `.card`, `.pill`, `.chip`,
-  `.input`, `.label`, `.surface-page`).
-
-## 4. Rutas
+## Rutas
 
 | Ruta | Página |
-|------|--------|
+| --- | --- |
 | `/` | Catálogo (acepta `?search=`, `?category=`, `?brand=`, `?page=`) |
 | `/producto/:slug` | Detalle del producto |
 | `/carrito` | Carrito |
 | `/checkout` | Finalizar pedido |
-| `/pedido/:token` | Seguimiento del pedido (guarda el `publicToken`) |
+| `/pedido/:token` | Seguimiento del pedido |
 
-## 5. Flujo de compra
+## Estructura
 
-1. El comprador arma el carrito con variantes (`idVariant` + `quantity`).
-2. En **checkout** envía sus datos → `POST /store/orders` (el servidor calcula el
-   total y reserva stock 48 h; estado inicial `PN`).
-3. Se abre el **`whatsappUrl`** para cerrar con la tienda y se marca
-   `whatsapp-sent`.
-4. Se redirige a `/pedido/:publicToken` para el seguimiento.
+```
+src/app/
+├─ core/
+│  ├─ config/    environment (apiBaseUrl + tenantSlug)
+│  ├─ http/      ApiService + tenant.interceptor (X-Tenant-Slug)
+│  ├─ models/    tipos de la API (catálogo, pedidos, branding, settings)
+│  └─ services/  cart · catalog · order · store-context · theme
+├─ features/     catalog · product-detail · cart · checkout · order-tracking
+├─ layout/       header · footer
+└─ shared/       ui (product-card, spinner, empty-state, icon) · pipes (money)
+```
 
-Respeta `maintenanceMode`: si está activo, el checkout se deshabilita (y el backend
-igual responde 503).
+## Despliegue
+
+La app compila a un sitio estático (SPA). El build de producción queda en
+`dist/ecommerce-egeek/browser`:
+
+```bash
+npm run build
+```
+
+Está desplegada en **Vercel** ([ecommerce-egeek.vercel.app](https://ecommerce-egeek.vercel.app/)).
+En cualquier hosting estático, recuerda redirigir todas las rutas a `index.html`
+para que funcione el enrutado del lado del cliente.
+
+---
+
+<div align="center">
+  Desarrollado por <b>Ivan Diaz</b>
+</div>

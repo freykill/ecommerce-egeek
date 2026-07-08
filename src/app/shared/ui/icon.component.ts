@@ -32,6 +32,11 @@ export type IconName =
   | 'card'
   | 'menu'
   | 'headset'
+  | 'keyboard'
+  | 'mouse'
+  | 'cpu'
+  | 'monitor'
+  | 'laptop'
   | 'refresh'
   | 'share'
   | 'whatsapp'
@@ -142,6 +147,21 @@ export type IconName =
       @case ('headset') {
         <svg [attr.width]="size" [attr.height]="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-2a9 9 0 0 1 18 0v2" /><path d="M21 16a2 2 0 0 1-2 2h-1v-6h1a2 2 0 0 1 2 2z" /><path d="M3 16a2 2 0 0 0 2 2h1v-6H5a2 2 0 0 0-2 2z" /><path d="M21 14v3a4 4 0 0 1-4 4h-5" /></svg>
       }
+      @case ('keyboard') {
+        <svg [attr.width]="size" [attr.height]="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="M6 8h.01" /><path d="M10 8h.01" /><path d="M14 8h.01" /><path d="M18 8h.01" /><path d="M8 12h.01" /><path d="M12 12h.01" /><path d="M16 12h.01" /><path d="M7 16h10" /></svg>
+      }
+      @case ('mouse') {
+        <svg [attr.width]="size" [attr.height]="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="7" /><path d="M12 6v4" /></svg>
+      }
+      @case ('cpu') {
+        <svg [attr.width]="size" [attr.height]="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="16" height="16" x="4" y="4" rx="2" /><rect width="6" height="6" x="9" y="9" rx="1" /><path d="M15 2v2" /><path d="M15 20v2" /><path d="M2 15h2" /><path d="M2 9h2" /><path d="M20 15h2" /><path d="M20 9h2" /><path d="M9 2v2" /><path d="M9 20v2" /></svg>
+      }
+      @case ('monitor') {
+        <svg [attr.width]="size" [attr.height]="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2" /><line x1="8" x2="16" y1="21" y2="21" /><line x1="12" x2="12" y1="17" y2="21" /></svg>
+      }
+      @case ('laptop') {
+        <svg [attr.width]="size" [attr.height]="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16" /></svg>
+      }
       @case ('refresh') {
         <svg [attr.width]="size" [attr.height]="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15-6.7L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-15 6.7L3 16" /><path d="M3 21v-5h5" /></svg>
       }
@@ -167,40 +187,4 @@ export type IconName =
 export class IconComponent {
   @Input({ required: true }) name!: IconName;
   @Input() size = 20;
-}
-
-/**
- * Las categorías del backend traen su ícono como clase de PrimeIcons
- * (ej. "pi pi-tag"). Lo mapeamos al set propio del storefront para no cargar una
- * fuente externa y mantener el trazo consistente. Cae en `tag` (ícono genérico
- * de categoría) si no reconoce la clase o viene vacía.
- */
-const PRIME_ICON_MAP: Record<string, IconName> = {
-  'pi-tag': 'tag',
-  'pi-heart': 'heart',
-  'pi-align-justify': 'menu',
-  'pi-shield': 'shield',
-  'pi-star': 'star',
-  'pi-sparkles': 'sparkles',
-  'pi-mobile': 'phone',
-  'pi-phone': 'phone',
-  'pi-home': 'store',
-  'pi-bolt': 'bolt',
-  'pi-gift': 'gift',
-  'pi-box': 'box',
-  'pi-truck': 'truck',
-  'pi-clock': 'clock',
-  'pi-credit-card': 'card',
-  'pi-shopping-bag': 'cart',
-  'pi-shopping-cart': 'cart',
-  'pi-envelope': 'mail',
-  'pi-map-marker': 'pin',
-  'pi-search': 'search',
-};
-
-/** Resuelve una clase de PrimeIcons a un ícono del set propio (fallback: `tag`). */
-export function categoryIcon(iconClass: string | null | undefined): IconName {
-  if (!iconClass) return 'tag';
-  const token = iconClass.split(/\s+/).find((c) => c.startsWith('pi-'));
-  return (token && PRIME_ICON_MAP[token]) || 'tag';
 }

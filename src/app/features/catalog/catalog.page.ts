@@ -6,7 +6,8 @@ import { ApiMeta, ProductCard, ProductQuery } from '../../core/models';
 import { CatalogService } from '../../core/services/catalog.service';
 import { StoreContextService } from '../../core/services/store-context.service';
 import { EmptyStateComponent } from '../../shared/ui/empty-state.component';
-import { IconComponent, IconName, categoryIcon } from '../../shared/ui/icon.component';
+import { IconComponent, IconName } from '../../shared/ui/icon.component';
+import { CategoryIconComponent } from '../../shared/ui/category-icon.component';
 import { ProductCardComponent } from '../../shared/ui/product-card.component';
 
 interface CatalogVm {
@@ -22,7 +23,13 @@ const PAGE_SIZE = 24;
 @Component({
   selector: 'app-catalog',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, ProductCardComponent, EmptyStateComponent, IconComponent],
+  imports: [
+    RouterLink,
+    ProductCardComponent,
+    EmptyStateComponent,
+    IconComponent,
+    CategoryIconComponent,
+  ],
   template: `
     <!-- ============================================================ HOME -->
     @if (!hasFilters()) {
@@ -154,7 +161,12 @@ const PAGE_SIZE = 24;
                   [style.background]="chipTint(cat.color)"
                   [style.color]="catColor(cat.color)"
                 >
-                  <app-icon [name]="catIcon(cat.icon)" [size]="18" />
+                  <app-category-icon
+                    [icon]="cat.icon"
+                    [name]="cat.name"
+                    [slug]="cat.slug"
+                    [size]="18"
+                  />
                 </span>
                 <span class="min-w-0 flex-1 truncate text-sm font-medium text-ink">
                   {{ cat.name }}
@@ -417,11 +429,6 @@ export class CatalogPage {
   /** Color de acento de la categoría (cae en el color de marca si viene vacío). */
   protected catColor(color: string | null): string {
     return color || 'var(--brand-primary)';
-  }
-
-  /** Ícono del set propio a partir de la clase PrimeIcons del backend. */
-  protected catIcon(icon: string | null): IconName {
-    return categoryIcon(icon);
   }
 
   /** Fondo del chip del ícono: tinte sutil del color de la categoría. */

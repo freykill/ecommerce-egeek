@@ -13,12 +13,13 @@ import { CartService } from '../core/services/cart.service';
 import { CatalogService } from '../core/services/catalog.service';
 import { StoreContextService } from '../core/services/store-context.service';
 import { IconComponent } from '../shared/ui/icon.component';
+import { CategoryIconComponent } from '../shared/ui/category-icon.component';
 
 /** Encabezado global: barra utilitaria, marca, buscador, carrito y categorías. */
 @Component({
   selector: 'app-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IconComponent],
+  imports: [RouterLink, IconComponent, CategoryIconComponent],
   template: `
     <!-- Aviso de mantenimiento (bloquea pedidos) -->
     @if (store.maintenanceMode()) {
@@ -171,7 +172,15 @@ import { IconComponent } from '../shared/ui/icon.component';
                 [queryParams]="{ category: cat.slug }"
                 class="nav-link"
                 [attr.data-active]="activeCategory() === cat.slug"
+                [style.--cat]="catAccent(cat.color)"
               >
+                <app-category-icon
+                  class="nav-ic"
+                  [icon]="cat.icon"
+                  [name]="cat.name"
+                  [slug]="cat.slug"
+                  [size]="15"
+                />
                 {{ cat.name }}
               </a>
             }
@@ -184,6 +193,9 @@ import { IconComponent } from '../shared/ui/icon.component';
     `
       .nav-link {
         flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
         padding: 0.7rem 0.1rem;
         font-size: 0.875rem;
         font-weight: 500;
@@ -195,12 +207,16 @@ import { IconComponent } from '../shared/ui/icon.component';
           color 0.15s ease,
           border-color 0.15s ease;
       }
+      /* El glifo lleva el color de la categoría (o el de marca si no trae). */
+      .nav-ic {
+        color: var(--cat, var(--brand-primary));
+      }
       .nav-link:hover {
         color: var(--ink);
       }
       .nav-link[data-active='true'] {
         color: var(--ink);
-        border-bottom-color: var(--brand-primary);
+        border-bottom-color: var(--cat, var(--brand-primary));
       }
     `,
   ],
@@ -228,6 +244,11 @@ export class HeaderComponent {
   protected readonly activeCategory = computed(
     () => this.queryParams()?.get('category') ?? null,
   );
+
+  /** Color de acento de la categoría (cae en el de marca si el backend no lo trae). */
+  protected catAccent(color: string | null): string {
+    return color || 'var(--brand-primary)';
+  }
 
   @HostListener('window:scroll')
   protected onScroll(): void {
